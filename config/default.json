@@ -1,0 +1,82 @@
+{
+    "environment": "dev",
+    "app_name": "UCS",
+    "app_domain": "",
+    "jwtPrivateKey": "unsecureKey",
+    "bcryptSalt": "$2b$10$oPd2gJERglqNiWXf3sYwIu",
+    "dbMlab": "mongodb://localhost/parking_management",
+    "port": "6103",
+    "password_policy": {
+      "max_failed_retries": 5,
+      "distinct_password": 3,
+      "block_time_in_min": 1
+    },
+    "max_otp_attempts": 3,
+    "otp_expiry_in_mins": 15,
+    "reset_password_otp_expiry_in_mins": 600,
+    "sendSms": false,
+    "requiresAuth": true,
+    "S3_SECRET_KEY": "FADrYz4aksunzY7SDX2oMGkU7Xal6vUSMbrzxQ4I",
+    "S3_ACCESS_KEY": "AKIAY4MGIE37CISCRFRU",
+    "S3_BUCKET_REGION": "us-east-2",
+    "S3_BUCKET_NAME": "ucsapp",
+    "FIREBASE_DB": "",
+    "dashboard": {
+      "Days": 30
+    },
+    "startTime": 9,
+    "endTime": 5,
+    "bookingEndTime": 17,
+    "duration": 45,
+    "durationSec": 2700,
+    "bookingPrice": 200,
+    "refundAmount": 170,
+    "cancellationAmount": 30,
+    "callTime": 300,
+    "sign": "-",
+    "offsetHour": 4,
+    "offsetMin": 0,
+    "STRIPE_KEY": "sk_test_BnLAU3UNJKPbDcMamcOaYoui00J4i1jTGO",
+    "callerId": "+18003116125",
+    "outgoingNumber": "+18623438762",
+    "smsc_twilio": {
+      "sms_client": "AC7f40013e6b694dcbadab58f24f1b9ee6",
+      "sms_client_secret": "6e616aa987c48b13f3aee0f368ff1464",
+      "sms_from_number": "+18623438762",
+      "registrationOTP": "$otp$ is your verification code for registering on United Consulting Services.",
+      "resetPasswordOTP": "$otp$ is your verification code for reset password request."
+    },
+    "twilio_credentials": {
+      "TWILIO_ACCOUNT_SID": "AC7f40013e6b694dcbadab58f24f1b9ee6",
+      "TWILIO_AUTH_TOKEN": "6e616aa987c48b13f3aee0f368ff1464",
+      "TWILIO_API_KEY": "SK7b9dfa99f5e47bd73cadb2cb7aaeddda",
+      "TWILIO_API_SECRET": "eFQZS9g2n1oENbiV0EkevgXQQa6QxbnU"
+    },
+    "email_sendgrid": {
+      "email_api_key": "",
+      "senderId": "",
+      "OtpSubject": "Verification code for devTest application!!!",
+      "Singup": "Welcome to united consulting services!!!",
+      "Status": "User status!!!",
+      "VerifyEmailSubject": "Email Verification!!!",
+      "ResetPasswordEmailSubject": "Reset Password Link!!!"
+    },
+    "notifications": {
+      "registerTitle": "Welcome to United Consulting Services",
+      "register": "Thank you for signing up with United Consulting Services",
+      "newBookingTitle": "New Booking",
+      "newBooking": "$userName$ has booked an appointment for $bookingDate$ at $time$",
+      "cancelBookingTitle": "Booking Cancelled",
+      "cancelBooking": "$userName$ has cancelled the booking for $bookingDate$ at $time$",
+      "consultantCancelBooking": "$userName$ has cancelled your booking for $bookingDate$ at $time$, please book another appointment",
+      "upcomingBookingTitle": "You have an Upcoming Appointment",
+      "upcomingBooking": "$userName$ has an upcoming appointment in 1 hour / 15mins",
+      "nextAppointment": "Your next appointment is in 1 hour / 15mins",
+      "incomingTitle": "Incoming video call from $userName$",
+      "answeredTitle": "$userName$ answered your call",
+      "diconnectedTitle": "$userName$ did not respond to the call"
+    },
+    "cheatOTP": true,
+    "logo": ""
+  }
+  
