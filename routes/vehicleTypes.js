@@ -54,12 +54,24 @@ router.post("/", async (req, res) => {
 });
 
 
+// router.get("/", async (req, res) => {
+//   //let type = await vehicleType.findOne({ type: req.query.type })
+//   //if (req.body.type) vehicle.type = req.body.type;
+//    let type=await vehicleType.find()
+//   return res.status(200).send({ statusCode: 200, message: "Success", data: { type } });
+// });
+
+//read vehicle data 
 router.get("/", async (req, res) => {
-  let type = await vehicleType.findOne({ type: req.query.type })
-  //if (req.body.type) vehicle.type = req.body.type;
+  let criteria = {};
 
-  return res.status(200).send({ statusCode: 200, message: "Success", data: { type } });
+  if(req.query.type) criteria.type =  req.query.type
+  let list = await vehicleType.aggregate([
+    { $match: criteria },
+     
+  ])
 
+  return res.status(200).send({ statusCode: 200, message: "Success", data: { list } });
 });
 
 //update vehicle type

@@ -5,12 +5,41 @@ const bcrypt = require("bcryptjs");
 const _ = require("lodash");
 const express = require("express");
 const router = express.Router();
-
 const { User, validateUserPost, validateLogin, validateUserPut } = require("../models/user");
-
 const { identityManager } = require("../middleware/auth");
-
 mongoose.set("debug", true);
+
+
+
+//getUserList
+router.get("/userList", identityManager(["user", "admin"], {}), async (req, res) => {
+  let criteria = {};
+  let list = await User.aggregate([
+    { $match: criteria },
+
+    
+     { $addFields: { adminId: { $toObjectId: "$adminId" } } },
+     { $lookup: { from: "admins", localField: "adminId", foreignField: "_id", as: "adminData" } },
+
+     {
+       $project: {
+         _id: 0,
+         name: 1,
+         email: 1,
+         mobile: 1,
+         status: 1,
+     
+        adminName: {
+           $arrayElemAt: ["$adminData.name", 0]
+         },
+       },
+     },
+  ])
+
+  return res.status(200).send({ statusCode: 200, message: "Success", data: { list } });
+});
+
+
 // Create a new user  "/users/registerUser"
 router.post("/", identityManager(["user", "admin"]), async (req, res) => {
   const { error } = validateUserPost(req.body);
@@ -29,9 +58,14 @@ router.post("/", identityManager(["user", "admin"]), async (req, res) => {
     if (req.body.mobile === user.mobile)
       return res.status(400).send({ apiId: req.apiId, statusCode: 400, message: "Failure", data: { message: USER_CONSTANTS.MOBILE_ALREADY_EXISTS } });
   }
-  user = new User(_.pick(req.body, ["userType", "name", "mobile", "deviceToken", "profilePic", "facebookId", "googleId"]));
 
+  user = new User(_.pick(req.body, ["userType", "name", "mobile", "deviceToken"]));
   user.email = req.body.email.toLowerCase();
+  user.adminId = req.jwtData.userId
+
+
+
+
   // encrypt password
   if (req.body.password) user.password = await bcrypt.hash(req.body.password, config.get("bcryptSalt"));
   user.status = "active";
@@ -48,7 +82,7 @@ router.post("/", identityManager(["user", "admin"]), async (req, res) => {
 
 
 //login
-router.post("/login",  async (req, res) => {
+router.post("/login", async (req, res) => {
   const { error } = validateLogin(req.body);
   if (error) return res.status(400).send({ apiId: req.apiId, statusCode: 400, message: "Failure", data: { message: error.details[0].message } });
 
@@ -76,7 +110,7 @@ router.post("/login",  async (req, res) => {
   user.userId = user._id;
   user.role = "user";
 
-  let response = _.pick(user, ["userId", "role", "name", "mobile", "email", "status", "profilePic", "userType", "insertDate"]);
+  let response = _.pick(user, ["userId", "role", "name", "mobile", "email", "status","userType", "insertDate"]);
   return res.header("Authorization", token).send({ apiId: req.apiId, statusCode: 200, message: "Success", data: response });
 });
 
@@ -97,20 +131,20 @@ router.put("/", identityManager(["user", "admin"], {}), async (req, res) => {
 
   user.name = req.body.name || user.name;
 
-   if (req.body.email && req.body.email != user.email) {
-     tempUser = await User.findOne({ email: req.body.email });
-     if (tempUser) return res.status(400).send({ apiId: req.apiId, statusCode: 400, message: "Failure", data: { message: USER_CONSTANTS.EMAIL_ALREADY_EXISTS } });
-     user.email = req.body.email;
-   }
-   if (req.body.mobile && req.body.mobile != user.mobile) {
-     let tempUser = await User.findOne({ mobile: req.body.mobile });
-     if (tempUser) return res.status(400).send({ apiId: req.apiId, statusCode: 400, message: "Failure", data: { message: USER_CONSTANTS.MOBILE_ALREADY_EXISTS } });
-  user.mobile = req.body.mobile;
-   }
+  if (req.body.email && req.body.email != user.email) {
+    tempUser = await User.findOne({ email: req.body.email });
+    if (tempUser) return res.status(400).send({ apiId: req.apiId, statusCode: 400, message: "Failure", data: { message: USER_CONSTANTS.EMAIL_ALREADY_EXISTS } });
+    user.email = req.body.email;
+  }
+  if (req.body.mobile && req.body.mobile != user.mobile) {
+    let tempUser = await User.findOne({ mobile: req.body.mobile });
+    if (tempUser) return res.status(400).send({ apiId: req.apiId, statusCode: 400, message: "Failure", data: { message: USER_CONSTANTS.MOBILE_ALREADY_EXISTS } });
+    user.mobile = req.body.mobile;
+  }
 
   await user.save();
-   let response = _.pick(user, [ "name", "mobile", "email", "status", "profilePic",  "insertDate"]);
-   res.status(200).send({ apiId: req.apiId, statusCode: 200, message: "Success", data: response });
+  let response = _.pick(user, ["name", "mobile", "email", "status"]);
+  res.status(200).send({ apiId: req.apiId, statusCode: 200, message: "Success", data: response });
 });
 
 

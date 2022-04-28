@@ -8,11 +8,13 @@ const UserSchema = new mongoose.Schema({
     name: { type: String, default: "" },
     mobile: { type: String, default: "", required: true, unique: true },
     email: { type: String, default: "-", required: true },
-    location: { type: String, default: "-", required: true },
-    profilePic: { type: String, default: "" },
+    //location: { type: String, default: "-", required: true },
+    //profilePic: { type: String, default: "" },
     password: { type: String, default: "" },
     accessToken: { type: String, default: "" },
+    adminId:{type:String},
     status: { type: String, enum: ["active", "inactive", "blocked", "suspended"] },
+    
 
     insertDate: { type: Number, default: () => { return Math.round(new Date() / 1000); }, },
     creationDate: { type: Date, default: () => { return new Date(); }, },
@@ -36,7 +38,7 @@ function validateUserPost(user) {
         password: Joi.string().min(8).max(20).required(),
         email: Joi.string().email().required(),
         mobile: Joi.string().required(),
-        profilePic: Joi.string().min(1).max(500).allow(""),
+        //profilePic: Joi.string().min(1).max(500).allow(""),
         deviceToken: Joi.string().min(1).max(200),
 
     };
